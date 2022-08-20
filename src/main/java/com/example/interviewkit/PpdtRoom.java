@@ -26,5 +26,8 @@ public class PpdtRoom {
     private Boolean isOpen;
 
 
+    private Integer joinedMembers;
+
+
 
 }

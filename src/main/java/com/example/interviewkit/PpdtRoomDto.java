@@ -14,7 +14,6 @@ public class PpdtRoomDto {
 
     private MultipartFile multipartFile;
     private String title;
-
     private Date date;
 
     private String imageName;
