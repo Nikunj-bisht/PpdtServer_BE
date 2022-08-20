@@ -16,16 +16,10 @@ public class PpdtRoom {
 
     @Id
     private String id;
-
     private String title;
-
     private Date date;
-
     private String imageName;
-
     private Boolean isOpen;
-
-
     private Integer joinedMembers;
 
 
