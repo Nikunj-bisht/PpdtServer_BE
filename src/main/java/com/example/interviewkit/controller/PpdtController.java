@@ -1,5 +1,6 @@
 package com.example.interviewkit.controller;
 
+import com.example.interviewkit.JoinRoomResponse;
 import com.example.interviewkit.PpdtRoom;
 import com.example.interviewkit.PpdtRoomDto;
 import com.example.interviewkit.PpdtRoomsRepository;
@@ -60,13 +61,13 @@ public class PpdtController {
     }
 
     @PutMapping(path = "/joinRoom")
-    public ResponseEntity joinRoom(@RequestParam(name = "room_name") String title){
+    public ResponseEntity<JoinRoomResponse> joinRoom(@RequestParam(name = "room_name") String title){
 
         Query query = new Query();
         query.addCriteria(Criteria.where("title").is(title));
         int val = mongoTemplate.find(new Query().addCriteria(Criteria.where("title").is(title)),PpdtRoom.class).get(0).getJoinedMembers();
         mongoTemplate.findAndModify(query,new Update().set("joinedMembers",val+1),PpdtRoom.class);
-        return new ResponseEntity("Success",HttpStatus.OK);
+        return new ResponseEntity(new JoinRoomResponse("Success","Joined Room"),HttpStatus.OK);
     }
 
 
