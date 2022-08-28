@@ -1,9 +1,6 @@
 package com.example.interviewkit.controller;
 
-import com.example.interviewkit.JoinRoomResponse;
-import com.example.interviewkit.PpdtRoom;
-import com.example.interviewkit.PpdtRoomDto;
-import com.example.interviewkit.PpdtRoomsRepository;
+import com.example.interviewkit.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -19,6 +16,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +26,8 @@ public class PpdtController {
 
     @Autowired
     PpdtRoomsRepository ppdtRoomsRepository;
+    @Autowired
+    UserRepository userRepository;
 
     @Autowired
     MongoTemplate mongoTemplate;
@@ -39,13 +40,14 @@ public class PpdtController {
     }
 
     @PostMapping(path = "/createPpdtRoom")
-    public ResponseEntity<PpdtRoom> createPpdtRoom(PpdtRoomDto ppdtRoomDto) throws IOException {
+    public ResponseEntity<USer> createPpdtRoom(PpdtRoomDto ppdtRoomDto , @RequestParam(name = "id") String id) throws IOException {
 
         Query query = new Query();
         query.addCriteria(Criteria.where("title").is(ppdtRoomDto.getTitle()));
         if(!mongoTemplate.find(query,PpdtRoom.class).isEmpty()){
               return new ResponseEntity<>(null,HttpStatus.CONFLICT);
         }
+        USer uSer = userRepository.findById(id).get();
         Path path = Paths.get(System.getProperty("user.dir") + "/src/main/upload/static/images",
                 ppdtRoomDto.getImageName().concat(".").concat("jpg"));
 
@@ -56,8 +58,19 @@ public class PpdtController {
         ppdtRoom.setImageName(ppdtRoomDto.getImageName());
         ppdtRoom.setIsOpen(true);
         ppdtRoom.setJoinedMembers(0);
+        ppdtRoom = ppdtRoomsRepository.save(ppdtRoom);
+        uSer.setRoomList(new ArrayList<>(Arrays.asList(ppdtRoom)));
+        return new ResponseEntity<>(userRepository.save(uSer),HttpStatus.OK);
+    }
 
-        return new ResponseEntity<>(ppdtRoomsRepository.save(ppdtRoom),HttpStatus.OK);
+    @PostMapping(path = "/audio")
+    public ResponseEntity<AudioResponse> getAudio(AudioDto audioDto) throws IOException {
+        Path path = Paths.get(System.getProperty("user.dir") + "/src/main/upload/static/audio",
+                audioDto.getAudioName().concat(".").concat("3gp"));
+
+        Files.write(path, audioDto.getMultipartFile().getBytes());
+
+        return new ResponseEntity<>(new AudioResponse(path.getFileName().toString()),HttpStatus.OK);
     }
 
     @PutMapping(path = "/joinRoom")

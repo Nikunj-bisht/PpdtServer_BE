@@ -7,24 +7,20 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.Date;
+import java.util.List;
 
-@Document("ppdts")
+@Document(collection = "appuser")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class PpdtRoom {
+public class USer {
 
     @Id
     private String id;
-    private String title;
-    private Date date;
-    private String imageName;
-    private Boolean isOpen;
-    private Integer joinedMembers;
+    private String name;
+    private String password;
 
     @DBRef
-    USer uSer;
 
-
+    List<PpdtRoom> roomList;
 }
