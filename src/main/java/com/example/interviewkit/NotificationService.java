@@ -1,6 +1,7 @@
 package com.example.interviewkit;
 
 
+import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.MulticastMessage;
@@ -22,9 +23,9 @@ public class NotificationService {
                 .addAllTokens(tokens)
                 .build();
 
-        firebaseMessaging.sendMulticast(multicastMessage);
+       BatchResponse batchResponse = firebaseMessaging.sendMulticast(multicastMessage);
 
-
+System.out.println(batchResponse.getSuccessCount()+"succ");
 
 
 

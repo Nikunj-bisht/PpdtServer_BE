@@ -1,6 +1,7 @@
 package com.example.interviewkit.controller;
 
 import com.example.interviewkit.*;
+import com.google.firebase.messaging.FirebaseMessagingException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -10,8 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -31,6 +30,8 @@ public class PpdtController {
 
     @Autowired
     MongoTemplate mongoTemplate;
+    @Autowired
+    NotificationService notificationService;
 
     @GetMapping(path = "/getPpdtRooms")
     public ResponseEntity<List<PpdtRoom>> getPpDtRooms(){
@@ -81,6 +82,12 @@ public class PpdtController {
         int val = mongoTemplate.find(new Query().addCriteria(Criteria.where("title").is(title)),PpdtRoom.class).get(0).getJoinedMembers();
         mongoTemplate.findAndModify(query,new Update().set("joinedMembers",val+1),PpdtRoom.class);
         return new ResponseEntity(new JoinRoomResponse("Success","Joined Room"),HttpStatus.OK);
+    }
+
+    @GetMapping(path = "/notify")
+    public ResponseEntity<String> getNoti() throws FirebaseMessagingException {
+        notificationService.sendNotifications(new ArrayList<>(Arrays.asList("ew0xMBWdTnya4u3fAVWSRo:APA91bFAxVgRCbyCw2NonO_Nq1UtPeVmd3BxZQhR_Mc1pcxGSnU6VBt_ph9QT3oLMIBMezZ24hy2eNsLyde2kMflVd4p1AJ6roRsEkA67VPhe9EazYGip2B0mJoBPRmRp0YP45Yfxltu")),"HEllo","Kashyap");
+   return new ResponseEntity<>("Htllo",HttpStatus.OK);
     }
 
 

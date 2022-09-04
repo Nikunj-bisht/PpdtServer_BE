@@ -6,10 +6,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,13 +19,13 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
     @PostMapping(path = "/user")
-   public ResponseEntity saveUSer(@RequestParam(name = "name") String name,@RequestParam(name = "password") String password){
+   public ResponseEntity<UserResponse> saveUSer(@RequestBody UserDto userDto){
         USer uSer = new USer();
-        uSer.setName(name);
-        uSer.setPassword(password);
-        mongoTemplate.save(uSer);
+        uSer.setName(userDto.getUserName());
+        uSer.setPassword(userDto.getPassword());
+        USer uSer1 = mongoTemplate.save(uSer);
 
-        return new ResponseEntity("OK", HttpStatus.OK);
+        return new ResponseEntity(new UserResponse(uSer1.getName(),uSer1.getId()), HttpStatus.OK);
 
     }
     @GetMapping(value = "/getRooms")
