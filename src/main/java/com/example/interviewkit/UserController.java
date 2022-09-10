@@ -23,6 +23,7 @@ public class UserController {
         USer uSer = new USer();
         uSer.setName(userDto.getUserName());
         uSer.setPassword(userDto.getPassword());
+        uSer.setFcmToken(userDto.getFcmToken());
         USer uSer1 = mongoTemplate.save(uSer);
 
         return new ResponseEntity(new UserResponse(uSer1.getName(),uSer1.getId()), HttpStatus.OK);
