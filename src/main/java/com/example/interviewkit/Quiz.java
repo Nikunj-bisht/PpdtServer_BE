@@ -1,6 +1,5 @@
 package com.example.interviewkit;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,20 +9,17 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
 
-@Document(collection = "appuser")
+@Document("Quiz")
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class USer {
+public class Quiz {
+
     @Id
-    private String id;
-    private String name;
-    private String password;
-    private String fcmToken;
+    private String quizId;
+    private String quizName;
     @DBRef
-    @JsonIgnore
-    List<PpdtRoom> roomList;
-    @DBRef
-    @JsonIgnore
-    List<QuizMetadata> quizMetadata;
+    List<QuizQuestionModel> quizQuestionModels;
+
+
 }
