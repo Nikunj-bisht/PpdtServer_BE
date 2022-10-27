@@ -5,10 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,25 +13,27 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Controller
+@RequestMapping("/api/v1")
 public class QuizController {
-@Autowired
+    @Autowired
     QuizRepository quizRepository;
-@Autowired
-UserRepository userRepository;
-@Autowired
-QuizRecordRepository quizRecordRepository;
-@Autowired
-QuizQuestionsRepository quizQuestionsRepository;
-@PostMapping(value = "/quiz")
-    public ResponseEntity addQuiz(){
-  Quiz quiz =  new Quiz();
-  quiz.setQuizName("sample");
-     quizRepository.save(quiz);
-    return new ResponseEntity("OK", HttpStatus.CREATED);
-}
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    QuizRecordRepository quizRecordRepository;
+    @Autowired
+    QuizQuestionsRepository quizQuestionsRepository;
+
+    @PostMapping(value = "/quiz")
+    public ResponseEntity addQuiz() {
+        Quiz quiz = new Quiz();
+        quiz.setQuizName("sample");
+        quizRepository.save(quiz);
+        return new ResponseEntity("OK", HttpStatus.CREATED);
+    }
 
     @PostMapping(value = "/quizRecord")
-    public ResponseEntity quizRecord(){
+    public ResponseEntity quizRecord() {
         Quiz quiz = quizRepository.findAll().get(0);
         USer uSer = userRepository.findById("631cdb110ec5f86abefb72fd").get();
         QuizMetadata quizMetadata = new QuizMetadata();
@@ -48,27 +47,42 @@ QuizQuestionsRepository quizQuestionsRepository;
     }
 
     @PostMapping("/createQuiz")
-    public ResponseEntity<Quiz> createQuiz(@RequestBody QuizDto quizDto){
-       Quiz quiz = new Quiz();
-       quiz.setQuizName(quizDto.getQuizName());
-       List<QuizQuestionModel> quizQuestionModels = quizDto.getQuizQuestions().stream().map(quizQuestion ->{
-           QuizQuestionModel quizQuestionModel = new QuizQuestionModel();
-           quizQuestionModel.setQuestion(quizQuestion.getQuestion());
-           quizQuestionModel.setOptions(quizQuestion.getOptions());
-            return quizQuestionModel;
-                }
-                ).collect(Collectors.toList());
-       quizQuestionsRepository.saveAll(quizQuestionModels);
-       quiz.setQuizQuestionModels(quizQuestionModels);
-       quiz = quizRepository.save(quiz);
+    public ResponseEntity createQuiz(@RequestParam(name = "userId") String userID,
+                                     @RequestParam(name = "quizName") String quizName) {
+        Quiz quiz = new Quiz();
+        USer uSer = userRepository.findById(userID).get();
+                quiz.setQuizName(quizName);
 
-        return new ResponseEntity(quiz,HttpStatus.CREATED);
+        quizRepository.save(quiz);
+        uSer.setQuizes(new ArrayList<>(Arrays.asList(quiz)));
+        userRepository.save(uSer);
+        return new ResponseEntity(quiz, HttpStatus.CREATED);
+    }
+
+    @PostMapping("/createQuizQuestions")
+    public ResponseEntity<Quiz> createQuizQuestions(@RequestBody QuizDto quizDto,
+                                                    @RequestParam(name = "quizId") String quizId) {
+        Quiz quiz = quizRepository.findById(quizId).get();
+//        quiz.setQuizName(quizDto.getQuizName());
+        List<QuizQuestionModel> quizQuestionModels = quizDto.getQuizQuestions().stream().map(quizQuestion -> {
+                    QuizQuestionModel quizQuestionModel = new QuizQuestionModel();
+                    quizQuestionModel.setQuestion(quizQuestion.getQuestion());
+                    quizQuestionModel.setOptions(quizQuestion.getOptions());
+                    return quizQuestionModel;
+                }
+        ).collect(Collectors.toList());
+        quizQuestionsRepository.saveAll(quizQuestionModels);
+        quiz.setQuizQuestionModels(quizQuestionModels);
+        quiz = quizRepository.save(quiz);
+
+        return new ResponseEntity(quiz, HttpStatus.CREATED);
 
 
     }
-    @GetMapping("/getQuizs")
-    public ResponseEntity getQuizes(@RequestParam(name = "quizId") String quizId , @RequestParam(name = "userId") String userId){
 
-    return new ResponseEntity(null,HttpStatus.OK);
+    @GetMapping("/getQuizes")
+    public ResponseEntity getQuizes(@RequestParam(name = "quizId") String quizId, @RequestParam(name = "userId") String userId) {
+        return new ResponseEntity(quizRepository.findById(quizId).get()
+                , HttpStatus.OK);
     }
 }

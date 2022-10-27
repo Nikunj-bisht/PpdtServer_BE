@@ -25,7 +25,7 @@ public class QuizMetadata {
     @DBRef
     USer uSer;
     @DBRef
-    Quiz quiz;
+    Quiz quiz; // manytoOne
     private Status status;
 
 

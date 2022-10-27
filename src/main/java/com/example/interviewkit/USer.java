@@ -21,9 +21,9 @@ public class USer {
     private String password;
     private String fcmToken;
     @DBRef
-    @JsonIgnore
     List<PpdtRoom> roomList;
     @DBRef
-    @JsonIgnore
     List<QuizMetadata> quizMetadata;
+    @DBRef
+    List<Quiz> quizes;
 }
