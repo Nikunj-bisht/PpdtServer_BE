@@ -17,21 +17,20 @@ import java.io.IOException;
 @SpringBootApplication()
 public class InterviewkitApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(InterviewkitApplication.class, args);
-	}
+    public static void main(String[] args) {
+        SpringApplication.run(InterviewkitApplication.class, args);
+    }
 
-	@Bean
-	FirebaseMessaging firebaseMessaging() throws IOException {
+    @Bean
+    FirebaseMessaging firebaseMessaging() throws IOException {
 
-		GoogleCredentials googleCredentials = GoogleCredentials.fromStream(new ClassPathResource("firebase-service-account.json")
-				.getInputStream());
-		FirebaseOptions firebaseOptions = FirebaseOptions.builder().setCredentials(googleCredentials).build();
-		FirebaseApp firebaseApp = FirebaseApp.initializeApp(firebaseOptions,"interview");
-		return FirebaseMessaging.getInstance(firebaseApp);
+        GoogleCredentials googleCredentials = GoogleCredentials.fromStream(new ClassPathResource("firebase-service-account.json")
+                .getInputStream());
+        FirebaseOptions firebaseOptions = FirebaseOptions.builder().setCredentials(googleCredentials).build();
+        FirebaseApp firebaseApp = FirebaseApp.initializeApp(firebaseOptions, "interview");
+        return FirebaseMessaging.getInstance(firebaseApp);
 
-	}
-
+    }
 
 
 }

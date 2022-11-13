@@ -50,6 +50,7 @@ public class QuizController {
     public ResponseEntity createQuiz(@RequestParam(name = "userId") String userID,
                                      @RequestParam(name = "quizName") String quizName) {
         Quiz quiz = new Quiz();
+
         USer uSer = userRepository.findById(userID).get();
                 quiz.setQuizName(quizName);
 
@@ -80,9 +81,17 @@ public class QuizController {
 
     }
 
-    @GetMapping("/getQuizes")
-    public ResponseEntity getQuizes(@RequestParam(name = "quizId") String quizId, @RequestParam(name = "userId") String userId) {
+    @GetMapping("/getQuize")
+    public ResponseEntity getQuize(@RequestParam(name = "quizId") String quizId, @RequestParam(name = "userId") String userId) {
         return new ResponseEntity(quizRepository.findById(quizId).get()
                 , HttpStatus.OK);
     }
+
+    @GetMapping("/getQuizes")
+    public ResponseEntity getQuizes(){
+
+         return new ResponseEntity(quizRepository.findAll(),HttpStatus.OK);
+
+    }
+
 }
